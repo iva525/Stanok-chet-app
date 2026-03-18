@@ -8,21 +8,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
         sudo apt update
         sudo apt install -y python3-pip
-        pip install buildozer
+        pip install buildozer cython
+
+    - name: Install system dependencies
+      run: |
+        sudo apt install -y \
+        git zip unzip openjdk-17-jdk \
+        python3-setuptools python3-wheel \
+        libffi-dev libssl-dev
 
     - name: Build APK
       run: |
-        buildozer init
+        buildozer init || true
         buildozer -v android debug
 
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: apk
         path: bin/*.apk
